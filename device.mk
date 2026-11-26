@@ -89,9 +89,8 @@ PRODUCT_PACKAGES += \
     DSPVolumeSynchronizer \
     MtkInCallService
 
-PRODUCT_COPY_FILES += \
-    $(call find-copy-subdir-files,*,$(LOCAL_PATH)/configs/audio/,$(TARGET_COPY_OUT_VENDOR)/etc)
-
+# Stock KJ7 audio configs (audio_device.xml for mt6789mt6366, audio_effects, etc.)
+# come from vendor/tecno/kj7 to avoid duplicate copy rules and MT6768 mismatches.
 PRODUCT_COPY_FILES += \
     frameworks/av/services/audiopolicy/config/a2dp_in_audio_policy_configuration_7_0.xml:$(TARGET_COPY_OUT_VENDOR)/etc/a2dp_in_audio_policy_configuration.xml \
     frameworks/av/services/audiopolicy/config/bluetooth_audio_policy_configuration_7_0.xml:$(TARGET_COPY_OUT_VENDOR)/etc/bluetooth_audio_policy_configuration.xml \
@@ -128,9 +127,6 @@ PRODUCT_COPY_FILES += \
 # Linker
 PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS += \
     $(LOCAL_PATH)/configs/linker.config.json
-
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/public.libraries.txt:$(TARGET_COPY_OUT_VENDOR)/etc/public.libraries.txt
 
 # Display
 PRODUCT_PACKAGES += \
@@ -201,13 +197,10 @@ PRODUCT_PACKAGES += \
     android.hardware.health@2.1-impl.recovery \
     android.hardware.health@2.1-service
 
-# NFC
+# NFC (KJ7 has an ST NFC chip: HAL service and configs come from the stock vendor blobs)
 PRODUCT_PACKAGES += \
-    android.hardware.nfc-service.nxp \
     com.android.nfc_extras \
     Tag
-PRODUCT_COPY_FILES += \
-    $(call find-copy-subdir-files,*,$(LOCAL_PATH)/configs/nfc,$(TARGET_COPY_OUT_VENDOR)/etc)
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.nfc.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_nfc/android.hardware.nfc.xml \
     frameworks/native/data/etc/android.hardware.nfc.hce.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_nfc/android.hardware.nfc.hce.xml \
@@ -225,20 +218,13 @@ PRODUCT_PACKAGES += \
     libhwbinder.vendor \
     android.hidl.allocator@1.0.vendor
 
-# Keymaster
-PRODUCT_PACKAGES += \
-    libkeymaster4_1support.vendor \
-    libkeymaster41.vendor \
-    libpuresoftkeymasterdevice.vendor \
-    libsoft_attestation_cert.vendor \
-    android.hardware.keymaster@4.1.vendor \
-    android.hardware.hardware_keystore.km41.xml
+# Keymaster/Keymint: provided by the stock vendor blobs (Trustonic TEE), no software keymaster
 
 # Light
 PRODUCT_PACKAGES += \
     android.hardware.lights-service.mediatek
 
-# Media
+# Media (stock KJ7 media_codecs_c2 / media_profiles come from vendor/tecno/kj7)
 PRODUCT_PACKAGES += \
     libcodec2_hidl@1.1.vendor \
     libcodec2_hidl@1.2.vendor \
@@ -246,9 +232,6 @@ PRODUCT_PACKAGES += \
     libsfplugin_ccodec_utils.vendor \
     libcodec2_soft_common.vendor \
     libstagefright_foundation-v33
-
-PRODUCT_COPY_FILES += \
-    $(call find-copy-subdir-files,*,$(LOCAL_PATH)/configs/media,$(TARGET_COPY_OUT_VENDOR)/etc)
 
 # Overlays
 PRODUCT_PACKAGES += \
@@ -315,9 +298,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     vendor.mediatek.hardware.mtkpower@1.2-service.stub
 
-PRODUCT_COPY_FILES += \
-    $(call find-copy-subdir-files,*,$(LOCAL_PATH)/configs/perf,$(TARGET_COPY_OUT_VENDOR)/etc)
-
 # Power Off Alarm
 PRODUCT_PACKAGES += \
     PowerOffAlarm
@@ -334,34 +314,17 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     MtkInCallService
 
-# Rootdir
+# Rootdir (all init/ueventd rc files now come from the stock vendor blobs)
 PRODUCT_PACKAGES += \
-    fstab.mt6768 \
-    init.connectivity.rc \
-    init.modem.rc \
-    init.mt6768.rc \
-    init.mt6768.usb.rc \
-    init.mt6768.power.rc \
-    init.project.rc \
-    init.sensor_1_0.rc \
-    init.zram.rc \
-    ueventd.mt6768.rc
+    fstab.mt6789
 
 PRODUCT_PACKAGES += \
-    init.recovery.mt6768.rc
+    init.recovery.mt6789.rc
 
-# Sensors
-PRODUCT_PACKAGES += \
-    android.hardware.sensors@1.0.vendor \
-    android.hardware.sensors@2.1.vendor \
-    android.frameworks.sensorservice@1.0.vendor \
-    android.hardware.sensors@2.1-service.kj7-multihal
-
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/sensors/hals.conf:$(TARGET_COPY_OUT_VENDOR)/etc/sensors/hals.conf
+# Sensors: stock multihal-mediatek HAL (sensors 2.0) + init.sensor_2_0.rc + hals.conf come from the stock vendor blobs
 
 # Shipping API level
-PRODUCT_SHIPPING_API_LEVEL := 33
+PRODUCT_SHIPPING_API_LEVEL := 34
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
@@ -370,8 +333,7 @@ PRODUCT_SOONG_NAMESPACES += \
     hardware/google/pixel \
     hardware/mediatek \
     hardware/mediatek/libmtkperf_client \
-    hardware/transsion \
-    hardware/transsion/libtranlog
+    hardware/transsion
 
 # Thermal
 PRODUCT_PACKAGES += \
@@ -402,9 +364,6 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     libnetutils.vendor
-
-PRODUCT_COPY_FILES += \
-    $(call find-copy-subdir-files,*,$(LOCAL_PATH)/configs/wifi/,$(TARGET_COPY_OUT_VENDOR)/etc/wifi)
 
 # Inherit the proprietary files
 $(call inherit-product, vendor/tecno/kj7/kj7-vendor.mk)
